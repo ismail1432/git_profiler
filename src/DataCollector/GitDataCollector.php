@@ -20,6 +20,7 @@ class GitDataCollector extends DataCollector
 
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
+        // We add tht git informations in the data
         $this->data = [
             'git_branch' => $this->gitLoader->getBranchName(),
             'last_commit_message' => $this->gitLoader->getLastCommitMessage(),
@@ -37,6 +38,7 @@ class GitDataCollector extends DataCollector
         $this->data = array();
     }
 
+    //Some helpers to access more easily in the template
     public function getGitBranch()
     {
         return $this->data['git_branch'];
