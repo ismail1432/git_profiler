@@ -47,8 +47,13 @@ class GitDataCollector extends DataCollector
         return $this->data['last_commit_message'];
     }
 
-    public function getLastCommitDetail()
+    public function getLastCommitAuthor()
     {
-        return $this->data['logs'];
+        return $this->data['logs']['author'];
+    }
+
+    public function getLastCommitDate()
+    {
+        return $this->data['logs']['date'];
     }
 }
