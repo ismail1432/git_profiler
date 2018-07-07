@@ -47,7 +47,10 @@ class GitLoader
         $gitLogs = file_exists($gitLogFile) ? file($gitLogFile, FILE_USE_INCLUDE_PATH) : "";
 
         $logExploded = explode(' ', end($gitLogs));
+        //$logExploded[2] contains author name
         $logs['author'] = $logExploded[2] ?? 'not defined';
+
+        //$logExploded[4] contains the last commit timestamp
         $logs['date'] = isset($logExploded[4]) ? date('Y/m/d H:i', $logExploded[4]) : "not defined";
 
         return $logs;
