@@ -20,7 +20,11 @@ class GitDataCollector extends DataCollector
 
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
-        $this->data['git_branch'] = $this->gitLoader->getBranchName();
+        $this->data = [
+            'git_branch' => $this->gitLoader->getBranchName(),
+            'last_commit_message' => $this->gitLoader->getLastCommitMessage(),
+            'logs' => $this->gitLoader->getLastCommitDetail(),
+        ];
     }
 
     public function getName()
@@ -36,5 +40,15 @@ class GitDataCollector extends DataCollector
     public function getGitBranch()
     {
         return $this->data['git_branch'];
+    }
+
+    public function getLastCommitMessage()
+    {
+        return $this->data['last_commit_message'];
+    }
+
+    public function getLastCommitDetail()
+    {
+        return $this->data['logs'];
     }
 }

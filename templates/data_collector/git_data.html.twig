@@ -22,9 +22,20 @@
         {# this is the content displayed when hovering the mouse over
         the toolbar panel #}
         <div class="sf-toolbar-info-piece">
-            <b>Git Branch</b>
-            <span></span>
+
+                <b>Last commit : </b>
+            <span>{{ collector.lastCommitDetail.date }} </span>
+
         </div>
+        <div class="sf-toolbar-info-piece">
+                <b>Author : </b>
+                <span>{{ collector.lastCommitDetail.author }} </span>
+        </div>
+        <div class="sf-toolbar-info-piece">
+                <b>Message : </b>
+                <span>{{ collector.lastCommitMessage }} </span>
+        </div>
+
     {% endset %}
 
     {# the 'link' value set to 'false' means that this panel doesn't

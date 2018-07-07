@@ -15,7 +15,6 @@ class DefaultController extends Controller
      */
     public function profiler(GitLoader $gitLoader)
     {
-        $gitLoader->getBranchName();
         return $this->render('base.html.twig');
     }
 }

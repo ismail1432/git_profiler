@@ -28,18 +28,32 @@ class GitLoader
             //seperate out by the "/" in the string
             $explodedString = explode("/", $firstLine, 3);
 
-            $branchname = $explodedString[2];
+            $branchname = trim($explodedString[2]);
         }
 
         return $branchname;
     }
 
-    public function getLastCommitMessages()
+    public function getLastCommitMessage()
     {
-        $gitCommitMessages = $this->projectDir.'/.git/COMMIT_EDITMSG';
-        $stringFromFile = file_exists($gitCommitMessages)
-            ? file($gitCommitMessages, FILE_USE_INCLUDE_PATH) : "";
+        $gitCommitMessageFile = $this->projectDir.'/.git/COMMIT_EDITMSG';
+        $commitMessage = file_exists($gitCommitMessageFile)
+            ? file($gitCommitMessageFile, FILE_USE_INCLUDE_PATH) : "";
 
-        dump($stringFromFile);
+        return \is_array($commitMessage) ? trim($commitMessage[0]) : "";
+    }
+
+    public function getLastCommitDetail()
+    {
+        $logs = [];
+        $gitLogFile = $this->projectDir.'/.git/logs/HEAD';
+        $gitLogs = file_exists($gitLogFile)
+            ? file($gitLogFile, FILE_USE_INCLUDE_PATH) : "";
+
+            $logExploded = explode(' ', end($gitLogs));
+            $logs['author'] = $logExploded[2];
+            $logs['date'] = date('Y/m/d H:i', $logExploded[4]);
+
+        return $logs;
     }
 }
