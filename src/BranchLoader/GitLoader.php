@@ -33,4 +33,13 @@ class GitLoader
 
         return $branchname;
     }
+
+    public function getLastCommitMessages()
+    {
+        $gitCommitMessages = $this->projectDir.'/.git/COMMIT_EDITMSG';
+        $stringFromFile = file_exists($gitCommitMessages)
+            ? file($gitCommitMessages, FILE_USE_INCLUDE_PATH) : "";
+
+        dump($stringFromFile);
+    }
 }
