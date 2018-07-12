@@ -27,7 +27,8 @@ class GitDataCollector extends DataCollector
         $this->data = [
             'git_branch' => $this->gitManager->findCurrentBranch(),
             'last_commit_message' => $this->gitManager->findLastCommitMessage(),
-            'logs' => $this->gitManager->findLastCommitDetail(),
+            'last_commit_details' => $this->gitManager->findLastCommitDetail(),
+            'logs' => $this->gitManager->findLogs(),
         ];
     }
 
@@ -54,11 +55,16 @@ class GitDataCollector extends DataCollector
 
     public function getLastCommitAuthor()
     {
-        return $this->data['logs']['author'];
+        return $this->data['last_commit_details']['author'];
     }
 
     public function getLastCommitDate()
     {
-        return $this->data['logs']['date'];
+        return $this->data['last_commit_details']['date'];
+    }
+
+    public function getLogs()
+    {
+        return $this->data['logs'];
     }
 }

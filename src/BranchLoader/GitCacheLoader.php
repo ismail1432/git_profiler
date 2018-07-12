@@ -60,11 +60,6 @@ class GitCacheLoader
         $this->cache->set('git.last_commit_message', $message);
     }
 
-    public function lastCommitDetailCacheIsValid()
-    {
-        return $this->cache->has('git.time_last_commit_detail') ? $this->cache->get('git.time_last_commit_detail') === filemtime($this->gitLogFile) : false;
-    }
-
     public function getLastCommitDetail()
     {
         return $this->cache->get('git.last_commit_detail');
@@ -75,5 +70,21 @@ class GitCacheLoader
     {
         $this->cache->set('git.time_last_commit_detail', filemtime($this->gitLogFile));
         $this->cache->set('git.last_commit_detail', $details);
+    }
+
+    public function setLogsInCache($logs)
+    {
+        $this->cache->set('git.time_logs', filemtime($this->gitLogFile));
+        $this->cache->set('git.logs', $logs);
+    }
+
+    public function getLogsFromCache()
+    {
+        $this->cache->get('git.logs');
+    }
+
+    public function gitLogsCacheIsValid()
+    {
+        return $this->cache->has('git.time_logs') ? $this->cache->get('git.time_logs') === filemtime($this->gitLogFile) : false;
     }
 }

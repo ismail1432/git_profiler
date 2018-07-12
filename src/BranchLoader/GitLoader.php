@@ -6,24 +6,27 @@ namespace App\BranchLoader;
 
 class GitLoader
 {
-    const NO_BRANCH = 'no branch name';
-    const HEAD = '/.git/HEAD';
     const COMMIT_EDIT_MESSAGE = '/.git/COMMIT_EDITMSG';
     const GIT_LOG_FILE = '/.git/logs/HEAD';
+    const HEAD = '/.git/HEAD';
+    const NO_BRANCH = 'no branch name';
 
-    private $projectDir;
+    private $commitEditMsg;
+    private $gitLogFile;
+    private $headFile;
 
     public function __construct($projectDir)
     {
-        $this->projectDir = $projectDir;
+        $this->commitEditMsg = $projectDir.self::COMMIT_EDIT_MESSAGE;
+        $this->gitLogFile = $projectDir.self::GIT_LOG_FILE;
+        $this->headFile = $projectDir.self::HEAD;
     }
 
     public function getBranchName()
     {
         $branchname = self::NO_BRANCH;
 
-        $stringFromFile = file_exists(self::HEAD) ? file(self::HEAD, FILE_USE_INCLUDE_PATH) : "";
-
+        $stringFromFile = file_exists($this->headFile) ? file($this->headFile, FILE_USE_INCLUDE_PATH) : "";
         if(isset($stringFromFile) && is_array($stringFromFile)) {
             //get the string from the array
             $firstLine = $stringFromFile[0];
@@ -38,25 +41,24 @@ class GitLoader
 
     public function getLastCommitMessage()
     {
-        $commitMessage = file_exists(self::COMMIT_EDIT_MESSAGE) ? file(self::COMMIT_EDIT_MESSAGE, FILE_USE_INCLUDE_PATH) : "";
+        $commitMessage = file_exists($this->commitEditMsg) ? file($this->commitEditMsg, FILE_USE_INCLUDE_PATH) : "";
 
         return \is_array($commitMessage) ? trim($commitMessage[0]) : "";
     }
 
     public function getLastCommitDetail()
     {
-        $logs = $this->getGitLogs();
+        $logs = $this->getLogs();
 
         return \is_array($logs) ? end($logs) : [];
     }
 
-    public function getGitLogs()
+    public function getLogs()
     {
         $logs = [];
-        $gitLogs = file_exists(self::GIT_LOG_FILE) ? file(self::GIT_LOG_FILE, FILE_USE_INCLUDE_PATH) : "";
+        $gitLogs = file_exists($this->gitLogFile) ? file($this->gitLogFile, FILE_USE_INCLUDE_PATH) : "";
 
         foreach ($gitLogs as $item => $value) {
-
             $logExploded = explode(' ', $value);
             $logs[$item]['sha'] = $logExploded[1] ?? 'not defined';
             $logs[$item]['author'] = $logExploded[2] ?? 'not defined';
