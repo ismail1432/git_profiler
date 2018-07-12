@@ -5,6 +5,7 @@ namespace App\DataCollector;
 
 
 use App\BranchLoader\GitLoader;
+use App\BranchLoader\GitManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -12,19 +13,21 @@ use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 class GitDataCollector extends DataCollector
 {
     private $gitLoader;
+    private $gitManager;
 
-    public function __construct(GitLoader $gitLoader)
+    public function __construct(GitLoader $gitLoader, GitManager $gitManager)
     {
         $this->gitLoader = $gitLoader;
+        $this->gitManager = $gitManager;
     }
 
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         // We add tht git informations in the data
         $this->data = [
-            'git_branch' => $this->gitLoader->getBranchName(),
-            'last_commit_message' => $this->gitLoader->getLastCommitMessage(),
-            'logs' => $this->gitLoader->getLastCommitDetail(),
+            'git_branch' => $this->gitManager->findCurrentBranch(),
+            'last_commit_message' => $this->gitManager->findLastCommitMessage(),
+            'logs' => $this->gitManager->findLastCommitDetail(),
         ];
     }
 

@@ -6,6 +6,11 @@ namespace App\BranchLoader;
 
 class GitLoader
 {
+    const NO_BRANCH = 'no branch name';
+    const HEAD = '/.git/HEAD';
+    const COMMIT_EDIT_MESSAGE = '/.git/COMMIT_EDITMSG';
+    const GIT_LOG_FILE = '/.git/logs/HEAD';
+
     private $projectDir;
 
     public function __construct($projectDir)
@@ -15,10 +20,9 @@ class GitLoader
 
     public function getBranchName()
     {
-        $gitHeadFile = $this->projectDir.'/.git/HEAD';
-        $branchname = 'no branch name';
+        $branchname = self::NO_BRANCH;
 
-        $stringFromFile = file_exists($gitHeadFile) ? file($gitHeadFile, FILE_USE_INCLUDE_PATH) : "";
+        $stringFromFile = file_exists(self::HEAD) ? file(self::HEAD, FILE_USE_INCLUDE_PATH) : "";
 
         if(isset($stringFromFile) && is_array($stringFromFile)) {
             //get the string from the array
@@ -34,24 +38,31 @@ class GitLoader
 
     public function getLastCommitMessage()
     {
-        $gitCommitMessageFile = $this->projectDir.'/.git/COMMIT_EDITMSG';
-        $commitMessage = file_exists($gitCommitMessageFile) ? file($gitCommitMessageFile, FILE_USE_INCLUDE_PATH) : "";
+        $commitMessage = file_exists(self::COMMIT_EDIT_MESSAGE) ? file(self::COMMIT_EDIT_MESSAGE, FILE_USE_INCLUDE_PATH) : "";
 
         return \is_array($commitMessage) ? trim($commitMessage[0]) : "";
     }
 
     public function getLastCommitDetail()
     {
+        $logs = $this->getGitLogs();
+
+        return \is_array($logs) ? end($logs) : [];
+    }
+
+    public function getGitLogs()
+    {
         $logs = [];
-        $gitLogFile = $this->projectDir.'/.git/logs/HEAD';
-        $gitLogs = file_exists($gitLogFile) ? file($gitLogFile, FILE_USE_INCLUDE_PATH) : "";
+        $gitLogs = file_exists(self::GIT_LOG_FILE) ? file(self::GIT_LOG_FILE, FILE_USE_INCLUDE_PATH) : "";
 
-        $logExploded = explode(' ', end($gitLogs));
-        //$logExploded[2] contains author name
-        $logs['author'] = $logExploded[2] ?? 'not defined';
+        foreach ($gitLogs as $item => $value) {
 
-        //$logExploded[4] contains the last commit timestamp
-        $logs['date'] = isset($logExploded[4]) ? date('Y/m/d H:i', $logExploded[4]) : "not defined";
+            $logExploded = explode(' ', $value);
+            $logs[$item]['sha'] = $logExploded[1] ?? 'not defined';
+            $logs[$item]['author'] = $logExploded[2] ?? 'not defined';
+            $logs[$item]['email'] = preg_replace('#<|>#','',$logExploded[3]) ?? 'not defined';
+            $logs[$item]['date'] = isset($logExploded[4]) ? date('Y/m/d H:i', $logExploded[4]) : "not defined";
+        }
 
         return $logs;
     }

@@ -27,6 +27,10 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    App\BranchLoader\GitCacheLoader:
+        arguments:
+            ['@cache.app.simple', '%kernel.project_dir%']
+
     App\BranchLoader\GitLoader:
         arguments:
             ['%kernel.project_dir%']
